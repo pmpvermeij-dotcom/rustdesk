@@ -175,8 +175,10 @@ jobs:
       - name: Inject EuroChat branding (naam + metadata)
         shell: bash
         run: |
-          # App-naam (titel/over/installmap/service) RustDesk -> EuroChat Hulp
-          sed -i 's#RwLock::new("RustDesk".to_owned())#RwLock::new("EuroChat Hulp".to_owned())#' libs/hbb_common/src/config.rs
+          # App-naam (titel/over/installmap/service) RustDesk -> EuroChat-Hulp
+          # LET OP: GEEN spatie in deze naam! windows.rs gebruikt de naam ongequote in
+          # `sc create {app_name} ...` (r3715) e.d. -> spatie = service-aanmaak faalt stil.
+          sed -i 's#RwLock::new("RustDesk".to_owned())#RwLock::new("EuroChat-Hulp".to_owned())#' libs/hbb_common/src/config.rs
           # Windows exe-metadata (Eigenschappen > Details). Exe-bestandsnaam blijft rustdesk(.exe)!
           sed -i 's#VALUE "ProductName", "RustDesk" "\\0"#VALUE "ProductName", "EuroChat Hulp" "\\0"#' flutter/windows/runner/Runner.rc
           sed -i 's#VALUE "FileDescription", "RustDesk Remote Desktop" "\\0"#VALUE "FileDescription", "EuroChat Hulp op afstand" "\\0"#' flutter/windows/runner/Runner.rc
