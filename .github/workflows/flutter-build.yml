@@ -169,8 +169,21 @@ jobs:
           sed -i 's#rs-ny.rustdesk.com#rustdesk.eurochat.app#g' libs/hbb_common/src/config.rs
           sed -i 's#OeVuKk5nlHiXp+APNn0Y3pC1Iwpwn44JGqrQCsWqmBw=#GArvw7NHw8N5WHeeopiN3wPEXPEd8xN1yxtIrzbRWLc=#g' libs/hbb_common/src/config.rs
           sed -i 's#pub static ref DEFAULT_SETTINGS: RwLock<HashMap<String, String>> = Default::default();#pub static ref DEFAULT_SETTINGS: RwLock<HashMap<String, String>> = RwLock::new(HashMap::from([("custom-rendezvous-server".to_string(),"rustdesk.eurochat.app".to_string()),("relay-server".to_string(),"rustdesk.eurochat.app".to_string()),("key".to_string(),"GArvw7NHw8N5WHeeopiN3wPEXPEd8xN1yxtIrzbRWLc=".to_string())]));#' libs/hbb_common/src/config.rs
-          echo '--- config.rs na injectie ---'
+          echo '--- config.rs na server-injectie ---'
           grep -nE 'RENDEZVOUS_SERVERS|RS_PUB_KEY|DEFAULT_SETTINGS: RwLock' libs/hbb_common/src/config.rs
+
+      - name: Inject EuroChat branding (naam + metadata)
+        shell: bash
+        run: |
+          # App-naam (titel/over/installmap/service) RustDesk -> EuroChat Hulp
+          sed -i 's#RwLock::new("RustDesk".to_owned())#RwLock::new("EuroChat Hulp".to_owned())#' libs/hbb_common/src/config.rs
+          # Windows exe-metadata (Eigenschappen > Details). Exe-bestandsnaam blijft rustdesk(.exe)!
+          sed -i 's#VALUE "ProductName", "RustDesk" "\\0"#VALUE "ProductName", "EuroChat Hulp" "\\0"#' flutter/windows/runner/Runner.rc
+          sed -i 's#VALUE "FileDescription", "RustDesk Remote Desktop" "\\0"#VALUE "FileDescription", "EuroChat Hulp op afstand" "\\0"#' flutter/windows/runner/Runner.rc
+          sed -i 's#VALUE "CompanyName", "Purslane Ltd" "\\0"#VALUE "CompanyName", "Administratiekantoor J. Vermeij" "\\0"#' flutter/windows/runner/Runner.rc
+          echo '--- branding na injectie ---'
+          grep -nE 'APP_NAME: RwLock' libs/hbb_common/src/config.rs
+          grep -nE 'ProductName|FileDescription|CompanyName' flutter/windows/runner/Runner.rc
 
       - name: Build rustdesk
         run: |
