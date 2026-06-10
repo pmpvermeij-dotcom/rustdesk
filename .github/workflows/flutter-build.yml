@@ -163,6 +163,14 @@ jobs:
           head -n 100 "${VCPKG_ROOT}/buildtrees/ffmpeg/build-${{ matrix.job.vcpkg-triplet }}-rel-out.log" || true
         shell: bash
 
+      - name: Inject EuroChat server (rustdesk.eurochat.app)
+        shell: bash
+        run: |
+          sed -i 's#rs-ny.rustdesk.com#rustdesk.eurochat.app#g' libs/hbb_common/src/config.rs
+          sed -i 's#OeVuKk5nlHiXp+APNn0Y3pC1Iwpwn44JGqrQCsWqmBw=#GArvw7NHw8N5WHeeopiN3wPEXPEd8xN1yxtIrzbRWLc=#g' libs/hbb_common/src/config.rs
+          echo '--- config.rs na injectie ---'
+          grep -nE 'RENDEZVOUS_SERVERS|RS_PUB_KEY' libs/hbb_common/src/config.rs
+
       - name: Build rustdesk
         run: |
           # Windows: build RustDesk
